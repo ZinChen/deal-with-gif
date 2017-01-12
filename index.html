@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>MaskedChat</title>
+
+	<script src="vendor/js/jquery-3.1.1.min.js"></script>
+	<script src="vendor/js/tweenjs-0.6.2.min.js"></script>
+	<script src="vendor/js/soundjs-0.6.2.min.js"></script>
+	<script src="vendor/js/compatibility.js"></script>
+	<script src="vendor/js/smoother.js"></script>
+
+	<script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="vendor/bootstrap/css/bootstrap-united.min.css"></link>
+	<!-- <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css"></link> -->
+	<link rel="stylesheet" href="css/style.css">
+
+	<script src="vendor/js/gif.js"></script>
+	<script src="vendor/js/objectdetect.js"></script>
+	<script src="vendor/js/objectdetect.frontalface.js"></script>
+	<script src="js/script.js"></script>
+</head>
+<body>
+	<div class="video-group">
+		<video id="video" style="display: none"></video>
+		<canvas id="canvas"></canvas>
+		<canvas id="canvas-chroma" style="display: none;"></canvas>
+	</div>
+	<button type="button" id="deal-effect" class="btn btn-primary btn-lg">Get The Deal</button>
+
+
+	<div id="deal-it-modal" class="modal fade" tabindex="-1" role="dialog">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title">Deal It!</h4>
+				</div>
+				<div class="modal-body">
+					<div class="img-frame">
+
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+					<button type="button" class="save-gif btn btn-primary">Сохранить</button>
+					<button type="button" class="send-gif btn btn-primary">Отправить</button>
+				</div>
+			</div><!-- /.modal-content -->
+		</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+</body>
+</html>
