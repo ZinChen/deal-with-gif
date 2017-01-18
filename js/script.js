@@ -24,12 +24,14 @@ window.onload = function() {
 	glasses.src = 'img/dealglasses.png';
 
 	var gifCanvas = $('<canvas id="gif-canvas">')[0];
-	var bufCanvas = $('<canvas>').attr('width', canvas.width).attr('height', canvas.height);
-	var glassIndicator = $('.glass-indicator');
+	var bufCanvas = $('<canvas>');
+	var $glassIndicator = $('.glass-indicator');
+	var $indicatorDescription = $('.indicator-desc');
 	var gifContext = gifCanvas.getContext('2d');
 	var gifRatio = 2;
 
-	glassIndicator.hide();
+	$glassIndicator.hide();
+	$indicatorDescription.hide();
 
 	createjs.Sound.registerSound("assets/dealwitsong.ogg", "dealwitsong");
 
@@ -41,7 +43,8 @@ window.onload = function() {
 		// } else {
 			setDealEffect(true);
 			createjs.Sound.stop();
-			var sound = createjs.Sound.play("dealwitsong", {offset: 0000, volume: 0.5});
+			var sound = createjs.Sound.play("dealwitsong", {offset: 0, volume: 0.5});
+			$indicatorDescription.show();
 			encoder = initGifEncoder();
 			setTimeout(function() {
 				video.pause();
@@ -87,13 +90,13 @@ window.onload = function() {
 				coords = getGlassesCoords(coords);
 				if (!isFaceFound) {
 					isFaceFound = true;
-					glassIndicator.show();
+					$glassIndicator.show();
 				}
 			} else {
 				// draw same place
 				if (isFaceFound) {
 					isFaceFound = false;
-					glassIndicator.hide();
+					$glassIndicator.hide();
 				}
 			}
 		}
@@ -154,10 +157,10 @@ window.onload = function() {
 
 	var drawGlasses = function(faceCoords) {
 		var glassesCoords = getGlassesCoords(faceCoords),
-				params = {
-					x: -100,
-					y: -100
-				};
+			params = {
+				x: -100,
+				y: -100
+			};
 
 		createjs.Tween.get(params, {
 			onChange: function() {
@@ -176,12 +179,14 @@ window.onload = function() {
 		.call(function() {
 			setTimeout(function() {
 				console.log('finish');
-				glassIndicator.hide();
+				$glassIndicator.hide();
+				$indicatorDescription.hide();
 
 				encoder.addFrame(gifContext, {delay: 1200, copy: true});
 				encoder.render();
 				encoder.on('finished', function(blob, data) {
 					var src = window.URL.createObjectURL(blob);
+					createjs.Sound.stop();
 					//$('<img/>').attr('src', src).appendTo('body');
 					showDealIt(src);
 					setDealEffect(false);
@@ -263,8 +268,6 @@ window.onload = function() {
 		if ($img.length) $img.remove();
 
 		$('<img/>').attr('src', src).appendTo($frame);
-
-		var $img = $frame.find('img');
 	};
 
 	var setDealEffect = function(status) {

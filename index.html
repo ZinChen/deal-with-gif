@@ -22,15 +22,19 @@
 </head>
 <body>
 	<div class="content-wrapper">
-		<div class="video-group">
-			<video id="video" style="display: none"></video>
-			<canvas id="canvas"></canvas>
-			<canvas id="canvas-chroma" style="display: none;"></canvas>
+		<div class="main-content">
+			<div class="video-group">
+				<video id="video" style="display: none"></video>
+				<canvas id="canvas"></canvas>
+			</div>
+			<br>
+			<br>
+			<button type="button" id="deal-effect" class="btn btn-primary btn-lg">Get The Deal</button>
 		</div>
-		<br>
-		<br>
-		<button type="button" id="deal-effect" class="btn btn-primary btn-lg">Get The Deal</button>
-		<div class="glass-indicator"><img src="img/dealglasses.png" alt="You will be in glasses"></div>
+		<div class="right-panel">
+			<div class="indicator-desc">If glasses below is showing, you will be in it when time is come!</div>
+			<div class="glass-indicator"><img src="img/dealglasses.png" alt="You will be in glasses" width="100px"></div>
+		</div>
 	</div>
 
 	<div id="deal-it-modal" class="modal fade" tabindex="-1" role="dialog">
@@ -38,7 +42,7 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-					<h4 class="modal-title">Deal It!</h4>
+					<h4 class="modal-title">Deal With It!</h4>
 				</div>
 				<div class="modal-body">
 					<div class="img-frame">
@@ -46,9 +50,9 @@
 					</div>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
-					<button type="button" class="save-gif btn btn-primary">Сохранить</button>
-					<button type="button" class="send-gif btn btn-primary">Отправить</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					<button type="button" class="save-gif btn btn-primary">Save</button>
+					<button type="button" class="send-gif btn btn-primary">Share</button>
 				</div>
 			</div><!-- /.modal-content -->
 		</div><!-- /.modal-dialog -->
