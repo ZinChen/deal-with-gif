@@ -14,6 +14,7 @@ window.onload = function() {
 		isChromaEffect = false,
 		isDealEffect = false,
 		isGifRecording = false,
+		isFaceFound = false;
 		gifFrameRate = 2,
 		gifCurrentFrame = 0,
 		dealSongEffectTime = 10000;
@@ -24,9 +25,11 @@ window.onload = function() {
 
 	var gifCanvas = $('<canvas id="gif-canvas">')[0];
 	var bufCanvas = $('<canvas>').attr('width', canvas.width).attr('height', canvas.height);
+	var glassIndicator = $('.glass-indicator');
 	var gifContext = gifCanvas.getContext('2d');
 	var gifRatio = 2;
 
+	glassIndicator.hide();
 
 	createjs.Sound.registerSound("assets/dealwitsong.ogg", "dealwitsong");
 
@@ -38,7 +41,7 @@ window.onload = function() {
 		// } else {
 			setDealEffect(true);
 			createjs.Sound.stop();
-			var instance = createjs.Sound.play("dealwitsong");
+			var sound = createjs.Sound.play("dealwitsong", {offset: 0000, volume: 0.5});
 			encoder = initGifEncoder();
 			setTimeout(function() {
 				video.pause();
@@ -82,8 +85,16 @@ window.onload = function() {
 			coords = getFaceCoords();
 			if (coords) {
 				coords = getGlassesCoords(coords);
+				if (!isFaceFound) {
+					isFaceFound = true;
+					glassIndicator.show();
+				}
 			} else {
 				// draw same place
+				if (isFaceFound) {
+					isFaceFound = false;
+					glassIndicator.hide();
+				}
 			}
 		}
 		drawFrame(coords);
@@ -165,6 +176,7 @@ window.onload = function() {
 		.call(function() {
 			setTimeout(function() {
 				console.log('finish');
+				glassIndicator.hide();
 
 				encoder.addFrame(gifContext, {delay: 1200, copy: true});
 				encoder.render();

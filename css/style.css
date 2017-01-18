@@ -63,8 +63,20 @@ button.send-message {
     vertical-align: middle;
 }
 
+.content-wrapper {
+    text-align: center;
+}
+
+@media (min-height: 630px) {
+    .content-wrapper {
+        max-height: 100%;
+        overflow: hidden;
+    }
+}
+
 .video-group {
-    display: table-cell;
+    // display: table-cell;
+    display: inline-block;
     vertical-align: bottom;
     border-collapse: collapse;
     background-color: #ccc;
