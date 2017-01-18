@@ -278,9 +278,9 @@ window.onload = function() {
 
 	var initGifEncoder = function() {
 		var gif = new GIF({
-			workers: 2,
+			workers: 3,
 			workerScript: 'vendor/js/gif.worker.js',
-			quality: 10,
+			quality: 20,
 			width: gifCanvas.width,
 			height: gifCanvas.height,
 		});
@@ -294,4 +294,4 @@ window.onload = function() {
 		gifContext.drawImage(bufCanvas[0], 0, 0);
 		data = null;
 	};
-}
+};
