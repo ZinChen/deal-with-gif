@@ -11,6 +11,7 @@ window.onload = function() {
 		canvasBuf,
 		encoder,
 		seriously,
+		lastFoundCoords,
 		isChromaEffect = false,
 		isDealEffect = false,
 		isGifRecording = false,
@@ -87,6 +88,7 @@ window.onload = function() {
 		if (isGifRecording) {
 			coords = getFaceCoords();
 			if (coords) {
+				lastFoundCoords = coords;
 				coords = getGlassesCoords(coords);
 				if (!isFaceFound) {
 					isFaceFound = true;
@@ -107,7 +109,7 @@ window.onload = function() {
 			if (gifCurrentFrame === gifFrameRate) {
 				gifCurrentFrame = 0;
 				drawGifCanvas();
-				encoder.addFrame(gifContext, {delay: 100, copy: true});
+				encoder.addFrame(gifContext, {delay: 50, copy: true});
 			}
 		}
 	};
@@ -237,6 +239,9 @@ window.onload = function() {
 		canvasBuf = grayscale;
 		context.putImageData(grayscale, 0, 0);
 		var coords = getFaceCoords();
+		if (!coords) {
+			coords = lastFoundCoords;
+		}
 		drawGlasses(coords);
 	};
 
