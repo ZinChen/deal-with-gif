@@ -140,3 +140,7 @@ p.chat-message-img {
 span.header-logo {
     padding-left: 50px;
 }
+
+#deal-it-modal ..modal-content {
+    background-color: #e6e6e6;
+}

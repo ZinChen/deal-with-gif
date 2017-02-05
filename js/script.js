@@ -19,7 +19,7 @@ window.onload = function() {
         isFaceFound = false;
         gifFrameRate = 2,
         gifCurrentFrame = 0,
-        dealSongEffectTime = 1000;
+        dealSongEffectTime = 10000;
         // dealSongEffectTime = 2000;
 
     canvas.width = 0;
@@ -46,7 +46,7 @@ window.onload = function() {
         // } else {
             setDealEffect(true);
             createjs.Sound.stop();
-            var sound = createjs.Sound.play("dealwitsong", {offset: 0, volume: 0}); // 0.5
+            var sound = createjs.Sound.play("dealwitsong", {offset: 0, volume: 0.5}); // 0.5
             $indicatorDescription.show();
             encoder = initGifEncoder();
             setTimeout(function() {
@@ -348,32 +348,7 @@ var vkPoster = {
         data.append('photo', gifBlob, filename);
         data.append('url', r.upload_url);
         $.ajax({
-            xhr: function () {
-                var xhr = new window.XMLHttpRequest();
-                xhr.upload.addEventListener("progress", function (evt) {
-                    if (evt.lengthComputable) {
-                        var percentComplete = evt.loaded / evt.total;
-                        D.log(percentComplete);
-                        // $('.progress').css({
-                        //     width: percentComplete * 100 + '%'
-                        // });
-                        // if (percentComplete === 1) {
-                        //     $('.progress').addClass('hide');
-                        // }
-                    }
-                }, false);
-                xhr.addEventListener("progress", function (evt) {
-                    D.log(evt);
-                    if (evt.lengthComputable) {
-                        var percentComplete = evt.loaded / evt.total;
-                        D.log(percentComplete);
-                        // $('.progress').css({
-                        //     width: percentComplete * 100 + '%'
-                        // });
-                    }
-                }, false);
-                return xhr;
-            },
+            xhr: this.XHRProgressbar,
             url: 'upload.php',
             data: data,
             cache: false,
@@ -399,6 +374,26 @@ var vkPoster = {
     },
     stepFiveAfterPost: function(r) {
         $.ajax({ url: 'delete.php?filename=' + this.filename });
+    },
+    XHRProgressbar: function () {
+        var xhr = new window.XMLHttpRequest();
+        var $progress = $('.custom-progress-bar .bar');
+        $progress.attr('aria-valuenow', 0);
+        xhr.upload.addEventListener("progress", function (evt) {
+            if (evt.lengthComputable) {
+                var percentComplete = evt.loaded / evt.total;
+                D.log(percentComplete);
+                $progress.attr('aria-valuenow', parseInt(percentComplete * 100));
+            }
+        }, false);
+        xhr.addEventListener("progress", function (evt) {
+            D.log(evt);
+            if (evt.lengthComputable) {
+                var percentComplete = evt.loaded / evt.total;
+                D.log(percentComplete);
+            }
+        }, false);
+        return xhr;
     }
 };
 
