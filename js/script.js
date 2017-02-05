@@ -173,7 +173,7 @@ window.onload = function() {
                 drawGifCanvas();
 
                 encoder.addFrame(gifContext, {delay: 50, copy: true});
-                // console.log(params);
+                // D.log(params);
             }
         }).
         to({
@@ -182,7 +182,7 @@ window.onload = function() {
         }, 1500)
         .call(function() {
             setTimeout(function() {
-                console.log('finish');
+                D.log('finish');
                 $glassIndicator.hide();
                 $indicatorDescription.hide();
 
@@ -348,6 +348,32 @@ var vkPoster = {
         data.append('photo', gifBlob, filename);
         data.append('url', r.upload_url);
         $.ajax({
+            xhr: function () {
+                var xhr = new window.XMLHttpRequest();
+                xhr.upload.addEventListener("progress", function (evt) {
+                    if (evt.lengthComputable) {
+                        var percentComplete = evt.loaded / evt.total;
+                        D.log(percentComplete);
+                        // $('.progress').css({
+                        //     width: percentComplete * 100 + '%'
+                        // });
+                        // if (percentComplete === 1) {
+                        //     $('.progress').addClass('hide');
+                        // }
+                    }
+                }, false);
+                xhr.addEventListener("progress", function (evt) {
+                    D.log(evt);
+                    if (evt.lengthComputable) {
+                        var percentComplete = evt.loaded / evt.total;
+                        D.log(percentComplete);
+                        // $('.progress').css({
+                        //     width: percentComplete * 100 + '%'
+                        // });
+                    }
+                }, false);
+                return xhr;
+            },
             url: 'upload.php',
             data: data,
             cache: false,
@@ -368,7 +394,7 @@ var vkPoster = {
         }, this.stepFourPostToWall.bind(this));
     },
     stepFourPostToWall: function (s) {
-        console.log(s);
+        D.log(s);
         VK.Api.call('wall.post', {message: '', attachments: 'doc' + this.userId + '_' + s.response[0].did}, this.stepFiveAfterPost.bind(this));
     },
     stepFiveAfterPost: function(r) {
