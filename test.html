@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	<script>
+	////////////////////
+	// Scope Practice //
+	////////////////////
+		console.log('hello');
+		var test = {
+			item: 'some',
+			method: function(some) {
+				if (typeof this.item === "undefined") {
+					console.log("something undefined");
+					console.log(some.item);
+				} else {
+					console.log(this.item);
+				}
+			}
+		};
+		var some = function() {
+			var tost = this;
+			this.method();
+			$('.button').click(this.method.bind(null, this));
+			setTimeout(function() {
+				tost.method();
+			}, 500);
+			console.log('hola!');
+		};
+
+		test.some = some;
+
+		var ot = {};
+		ot.method = function(){console.log('i am other')};
+		ot.some = some;
+	</script>
+</head>
+<body>
+	<a href="javascript:void(0);" class="button">clickme</a>
+</body>
+</html>

@@ -315,11 +315,12 @@ window.onload = function() {
 
 var vkPoster = {
 	userId: null,
+	filename: null,
 	post: function() {
 		VK.init({
 			apiId: 5834212
 		});
-		VK.Auth.login(this.stepOneGetUploadServer.bind(this), 'docs,wall');
+		VK.Auth.login(this.stepOneGetUploadServer.bind(this), 131072+8192); //'docs,wall'
 	},
 	stepOneGetUploadServer: function(r) {
 		D.log(r);
@@ -330,6 +331,7 @@ var vkPoster = {
 		VK.Api.call(
 			'docs.getUploadServer',
 			{},
+			// {group_id: r.session.mid},
 			this.stepTwoUploadImageToLocalServer.bind(this)
 		);
 	},
@@ -342,7 +344,9 @@ var vkPoster = {
 		var r = response.response;
 		var data = new FormData();
 		var time = new Date().getTime();
-		data.append('photo', gifBlob, 'deal-with-' + new Date().getTime() + '.gif');
+		var filename = 'deal-with-' + new Date().getTime() + '.gif';
+		this.filename = filename;
+		data.append('photo', gifBlob, filename);
 		data.append('url', r.upload_url);
 		$.ajax({
 			url: 'upload.php',
@@ -359,17 +363,17 @@ var vkPoster = {
 	stepThreeUploadImageToVkServer: function(data) {
 		var file = JSON.parse(data);
 		VK.Api.call('docs.save', {
-			user_id: userId,
-			group_id: userId,
+			user_id: this.userId,
+			group_id: this.userId,
 			file: file.file,
 		}, this.stepFourPostToWall.bind(this));
 	},
 	stepFourPostToWall: function (s) {
 		console.log(s);
-		VK.Api.call('wall.post', {message: '', attachments: 'doc' + userId + '_' + s.response[0].did}, this.stepFiveAfterPost.bind(this));
+		VK.Api.call('wall.post', {message: '', attachments: 'doc' + this.userId + '_' + s.response[0].did}, this.stepFiveAfterPost.bind(this));
 	},
 	stepFiveAfterPost: function(r) {
-		console.log('here we delete temp files');
+		$.ajax({ url: 'delete.php?filename=' + this.filename });
 		// delete gif here
 	}
 };
