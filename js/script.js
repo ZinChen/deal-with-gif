@@ -1,3 +1,4 @@
+var gifBlob;
 window.onload = function() {
 	var smoother = new Smoother([0.999, 0.999, 0.999, 0.999], [0, 0, 0, 0]),
 		video = document.getElementById('video'),
@@ -19,6 +20,7 @@ window.onload = function() {
 		gifFrameRate = 2,
 		gifCurrentFrame = 0,
 		dealSongEffectTime = 10000;
+		// dealSongEffectTime = 2000;
 
 	canvas.width = 0;
 	var glasses = new Image();
@@ -187,6 +189,7 @@ window.onload = function() {
 				encoder.addFrame(gifContext, {delay: 1200, copy: true});
 				encoder.render();
 				encoder.on('finished', function(blob, data) {
+					gifBlob = blob;
 					var src = window.URL.createObjectURL(blob);
 					createjs.Sound.stop();
 					//$('<img/>').attr('src', src).appendTo('body');
@@ -248,6 +251,11 @@ window.onload = function() {
 	var $modal = $('#deal-it-modal'),
 		$frame = $modal.find('.img-frame'),
 		$save = $modal.find('.save-gif');
+		$share = $modal.find('.send-gif');
+
+	$share.on('click', function() {
+		testVk();
+	});
 
 	$save.on('click', function() {
 		var $img = $frame.find('img');
@@ -270,7 +278,10 @@ window.onload = function() {
 		$modal.modal('show');
 
 		var $img = $frame.find('img');
-		if ($img.length) $img.remove();
+		if ($img.length) {
+			window.URL.revokeObjectURL($img.get(0).src);
+			$img.remove();
+		}
 
 		$('<img/>').attr('src', src).appendTo($frame);
 	};
@@ -299,4 +310,61 @@ window.onload = function() {
 		gifContext.drawImage(bufCanvas[0], 0, 0);
 		data = null;
 	};
+
+};
+var testVk = function() {
+	VK.init({
+		apiId: 5834212
+	});
+	VK.Auth.login(function(r) {
+		if (!r.session) {
+			return;
+		}
+		var userId = r.session.mid;
+		// VK.api("wall.post", {"message": "Hello!"}, function (data) {
+		// 	console.log("Post ID:" + data.response.post_id);
+		// });
+		VK.Api.call(
+			'docs.getUploadServer',
+			{}, //{group_id: r.session.mid},
+			function(response) {
+				if (!response.response) {
+					return;
+				}
+				var r = response.response;
+				var data = new FormData();
+				var time = new Date().getTime();
+				data.append('photo', gifBlob, 'deal-with-' + new Date().getTime() + '.gif');
+				data.append('url', r.upload_url);
+				$.ajax({
+					url: 'upload.php',
+					data: data,
+					cache: false,
+					contentType: false,
+					processData: false,
+					type: 'POST',
+					success: function(data) {
+						console.log(data);
+						testVkPost(data, userId);
+					}
+				});
+			});
+	}, 'docs,wall');
+	// }, 8192);
+};
+
+var testVkPost = function(data, userId) {
+	if (!data) {
+		data = '{"server":837724,"photo":"[{\"photo\":\"a703a4ae6e:x\",\"sizes\":[[\"s\",\"837724811\",\"2573c\",\"ORgv7eZCIpc\",75,56],[\"m\",\"837724811\",\"2573d\",\"Wi9nE29-Dk8\",130,97],[\"x\",\"837724811\",\"2573e\",\"Hl-K6eVjDfM\",160,120],[\"o\",\"837724811\",\"2573f\",\"iBioCJv6HCM\",130,98],[\"p\",\"837724811\",\"25740\",\"DB62mWJiryw\",160,120],[\"q\",\"837724811\",\"25741\",\"eo7rtVtjigY\",160,120],[\"r\",\"837724811\",\"25742\",\"K5NsqYkWqCc\",160,120]],\"kid\":\"761b34e549aced254a5b1bedcb53964b\",\"debug\":\"xsxmxxxoxpxqxrx\"}]","hash":"c9b74ecd1cf8a7956f1eb3766307c459"}';
+	}
+
+	var file = JSON.parse(data);
+	VK.Api.call('docs.save', {
+		user_id: userId,
+		group_id: userId,
+		file: file.file,
+	}, function (s) {
+		console.log(s);
+		VK.Api.call('wall.post', {message: 'Это круто!', attachments: 'doc' + userId + '_' + s.response[0].did}, function(r) { });
+	});
 };
