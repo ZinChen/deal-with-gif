@@ -19,7 +19,7 @@ window.onload = function() {
 		isFaceFound = false;
 		gifFrameRate = 2,
 		gifCurrentFrame = 0,
-		dealSongEffectTime = 10000;
+		dealSongEffectTime = 1000;
 		// dealSongEffectTime = 2000;
 
 	canvas.width = 0;
@@ -46,7 +46,7 @@ window.onload = function() {
 		// } else {
 			setDealEffect(true);
 			createjs.Sound.stop();
-			var sound = createjs.Sound.play("dealwitsong", {offset: 0, volume: 0.5});
+			var sound = createjs.Sound.play("dealwitsong", {offset: 0, volume: 0}); // 0.5
 			$indicatorDescription.show();
 			encoder = initGifEncoder();
 			setTimeout(function() {
@@ -312,8 +312,6 @@ window.onload = function() {
 	};
 
 };
-var postToVk = function() {
-};
 
 var vkPoster = {
 	userId: null,
@@ -321,9 +319,10 @@ var vkPoster = {
 		VK.init({
 			apiId: 5834212
 		});
-		VK.Auth.login(this.stepOneGetUploadServer, 'docs, wall');
+		VK.Auth.login(this.stepOneGetUploadServer.bind(this), 'docs,wall');
 	},
 	stepOneGetUploadServer: function(r) {
+		D.log(r);
 		if (!r.session) {
 			return;
 		}
@@ -331,15 +330,16 @@ var vkPoster = {
 		VK.Api.call(
 			'docs.getUploadServer',
 			{},
-			this.stepTwoUploadImageToLocalServer
+			this.stepTwoUploadImageToLocalServer.bind(this)
 		);
 	},
 	stepTwoUploadImageToLocalServer: function(response) {
+		D.log(response);
 		if (!response.response) {
 			return;
 		}
+		var vkThis = this;
 		var r = response.response;
-		var vkPoster = this;
 		var data = new FormData();
 		var time = new Date().getTime();
 		data.append('photo', gifBlob, 'deal-with-' + new Date().getTime() + '.gif');
@@ -352,7 +352,7 @@ var vkPoster = {
 			processData: false,
 			type: 'POST',
 			success: function(data) {
-				vkPoster.stepThreeUploadImageToVkServer(data);
+				vkThis.stepThreeUploadImageToVkServer(data);
 			}
 		});
 	},
@@ -362,13 +362,23 @@ var vkPoster = {
 			user_id: userId,
 			group_id: userId,
 			file: file.file,
-		}, this.stepFourPostToWall);
+		}, this.stepFourPostToWall.bind(this));
 	},
 	stepFourPostToWall: function (s) {
 		console.log(s);
-		VK.Api.call('wall.post', {message: '', attachments: 'doc' + userId + '_' + s.response[0].did}, this.stepFiveAfterPost);
+		VK.Api.call('wall.post', {message: '', attachments: 'doc' + userId + '_' + s.response[0].did}, this.stepFiveAfterPost.bind(this));
 	},
 	stepFiveAfterPost: function(r) {
+		console.log('here we delete temp files');
 		// delete gif here
+	}
+};
+
+var D = {
+	debug: true,
+	log: function(message) {
+		if (D.debug) {
+			console.log(message);
+		}
 	}
 };
