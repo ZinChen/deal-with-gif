@@ -19,6 +19,8 @@ window.onload = function() {
         isFaceFound = false;
         gifFrameRate = 2,
         gifCurrentFrame = 0,
+        gifPrevFrameTime = 0,
+        gifDelay = 50,
         dealSongEffectTime = 10000;
         // dealSongEffectTime = 2000;
 
@@ -58,7 +60,11 @@ window.onload = function() {
 
     // Getting video
     try {
-        compatibility.getUserMedia({video: true}, function(stream) {
+        compatibility.getUserMedia({audio: false, video: {
+            width: 640,
+            height: 480,
+            require: ["width", "height"]
+        }}, function(stream) {
             try {
                 video.src = compatibility.URL.createObjectURL(stream);
                 video.play();
@@ -110,8 +116,14 @@ window.onload = function() {
             gifCurrentFrame ++;
             if (gifCurrentFrame === gifFrameRate) {
                 gifCurrentFrame = 0;
+                var currentTime = new Date().getTime();
+                if (gifPrevFrameTime) {
+                    gifDelay = currentTime - gifPrevFrameTime;
+                }
+                D.log(gifDelay);
+                gifPrevFrameTime = currentTime;
                 drawGifCanvas();
-                encoder.addFrame(gifContext, {delay: 50, copy: true});
+                encoder.addFrame(gifContext, {delay: gifDelay, copy: true});
             }
         }
     };
@@ -373,7 +385,7 @@ var vkPoster = {
         VK.Api.call('wall.post', {message: '', attachments: 'doc' + this.userId + '_' + s.response[0].did}, this.stepFiveAfterPost.bind(this));
     },
     stepFiveAfterPost: function(r) {
-        $.ajax({ url: 'delete.php?filename=' + this.filename });
+        // $.ajax({ url: 'delete.php?filename=' + this.filename });
     },
     XHRProgressbar: function () {
         var xhr = new window.XMLHttpRequest();
@@ -405,3 +417,4 @@ var D = {
         }
     }
 };
+D.debug = false;
