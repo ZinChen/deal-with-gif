@@ -84,7 +84,7 @@ button.send-message {
     width: 120px;
     display: table-cell;
     vertical-align: top;
-    transform: translateY(30%);
+    // transform: translateY(30%);
 }
 
 .video-group {
@@ -143,4 +143,51 @@ span.header-logo {
 
 #deal-it-modal ..modal-content {
     background-color: #e6e6e6;
+}
+
+.bottom-group {
+    margin-top: 16px;
+}
+
+.bottom-group__elements {
+    width: 60%;
+    float: left;
+}
+
+.elements__dealtime {
+    position: relative;
+    padding-top: 5px;
+}
+
+.dealtime__description {
+    padding-bottom: 5px;
+}
+
+.dealtime__max {
+    position: absolute;
+    bottom: 10px;
+    right: 0;
+}
+
+.dealtime__min {
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+}
+
+.bottom-group__deal-button {
+    width: 40%;
+    float: left;
+}
+
+.rangeslider__fill {
+    background-color: #00bcd4;
+}
+.rangeslider--horizontal {
+    height: 10px;
+}
+
+.rangeslider__handle {
+    width: 30px;
+    height: 30px;
 }

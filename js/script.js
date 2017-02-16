@@ -1,6 +1,12 @@
 var gifBlob;
-window.onload = function() {
-    var smoother = new Smoother([0.999, 0.999, 0.999, 0.999], [0, 0, 0, 0]),
+$(function() {
+    var dealWithGif = new DealWithGif();
+    dealWithGif.init();
+});
+
+var DealWithGif = function() {
+    var _DealWithGif = this,
+        smoother = new Smoother([0.999, 0.999, 0.999, 0.999], [0, 0, 0, 0]),
         video = document.getElementById('video'),
         // glasses = document.getElementById('glasses'),
         dealEffect = document.getElementById("deal-effect"),
@@ -21,26 +27,53 @@ window.onload = function() {
         gifCurrentFrame = 0,
         gifPrevFrameTime = 0,
         gifDelay = 50,
-        dealSongEffectTime = 10000;
-        // dealSongEffectTime = 2000;
+        dealSongEffectInitTime = 10000,
+        dealSongEffectTime = 1000,
+        // dealSongEffectTime = 2000,
+        gifCanvas = $('<canvas id="gif-canvas">')[0],
+        bufCanvas = $('<canvas>'),
+        $glassIndicator = $('.glass-indicator'),
+        $indicatorDescription = $('.indicator-desc'),
+        gifContext = gifCanvas.getContext('2d'),
+        gifRatio = 2,
+        glasses = new Image();
 
     canvas.width = 0;
-    var glasses = new Image();
     glasses.src = 'img/dealglasses.png';
-
-    var gifCanvas = $('<canvas id="gif-canvas">')[0];
-    var bufCanvas = $('<canvas>');
-    var $glassIndicator = $('.glass-indicator');
-    var $indicatorDescription = $('.indicator-desc');
-    var gifContext = gifCanvas.getContext('2d');
-    var gifRatio = 2;
 
     $glassIndicator.hide();
     $indicatorDescription.hide();
 
-    createjs.Sound.registerSound("assets/dealwitsong.ogg", "dealwitsong");
+    this.init = function() {
+        createjs.Sound.registerSound("assets/dealwitsong.ogg", "dealwitsong");
+        startVideo();
+        dealEffect.addEventListener('click', handleDeal, false);
+    };
 
-    dealEffect.addEventListener('click', function() {
+    this.setDealTime = function(seconds) {
+        dealSongEffectTime = seconds * 1000;
+        D.log(dealSongEffectTime);
+    };
+
+    var initRangeSlider = function() {
+        $('#dealtime').rangeslider({
+            polyfill: false,
+            onSlide: function (position, value) {
+                _DealWithGif.setDealTime(value);
+                localStorage.setItem('dealtime', value);
+                $('.dealtime__current').html(value);
+            }
+        });
+
+        var value = localStorage.getItem('dealtime');
+        D.log(value);
+        if (value) {
+            $('#dealtime').val(value).change();
+            $('.dealtime__current').val(value);
+        }
+    };
+
+    var handleDeal = function() {
         // if (isDealEffect) {
         //  // video.paused
         //  video.play();
@@ -48,7 +81,9 @@ window.onload = function() {
         // } else {
             setDealEffect(true);
             createjs.Sound.stop();
-            var sound = createjs.Sound.play("dealwitsong", {offset: 0, volume: 0.5}); // 0.5
+            isFaceFound = false;
+            var offset = dealSongEffectInitTime - dealSongEffectTime;
+            var sound = createjs.Sound.play("dealwitsong", {offset: offset, volume: 0.5}); // 0.5
             $indicatorDescription.show();
             encoder = initGifEncoder();
             setTimeout(function() {
@@ -56,28 +91,30 @@ window.onload = function() {
                 compatibility.requestAnimationFrame(applyDealWithItEffect);
             }, dealSongEffectTime);
         // }
-    }, false);
+    };
 
-    // Getting video
-    try {
-        compatibility.getUserMedia({audio: false, video: {
-            width: 640,
-            height: 480,
-            require: ["width", "height"]
-        }}, function(stream) {
-            try {
-                video.src = compatibility.URL.createObjectURL(stream);
-                video.play();
-            } catch (error) {
-                video.src = stream;
-            }
-            compatibility.requestAnimationFrame(play);
-        }, function (error) {
-            alert('WebRTC not available');
-        });
-    } catch (error) {
-        alert(error);
-    }
+    var startVideo = function() {
+        // Getting video
+        try {
+            compatibility.getUserMedia({audio: false, video: {
+                width: 640,
+                height: 480,
+                require: ["width", "height"]
+            }}, function(stream) {
+                try {
+                    video.src = compatibility.URL.createObjectURL(stream);
+                    video.play();
+                } catch (error) {
+                    video.src = stream;
+                }
+                compatibility.requestAnimationFrame(play);
+            }, function (error) {
+                alert('WebRTC not available');
+            });
+        } catch (error) {
+            alert(error);
+        }
+    };
 
     var play = function() {
         if (video.paused || isChromaEffect) return;//video.play();
@@ -90,6 +127,7 @@ window.onload = function() {
 
         if (!canvas.width) {
             initCanvas();
+            initRangeSlider();
         }
         var coords = {};
 
@@ -203,7 +241,7 @@ window.onload = function() {
                 encoder.on('finished', function(blob, data) {
                     gifBlob = blob;
                     var src = window.URL.createObjectURL(blob);
-                    createjs.Sound.stop();
+                    // createjs.Sound.stop();
                     //$('<img/>').attr('src', src).appendTo('body');
                     showDealIt(src);
                     setDealEffect(false);
@@ -322,7 +360,6 @@ window.onload = function() {
         gifContext.drawImage(bufCanvas[0], 0, 0);
         data = null;
     };
-
 };
 
 var vkPoster = {
@@ -417,4 +454,4 @@ var D = {
         }
     }
 };
-D.debug = false;
+// D.debug = false;
