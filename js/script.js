@@ -1,6 +1,7 @@
 var gifBlob;
+var dealWithGif;
 $(function() {
-    var dealWithGif = new DealWithGif();
+    dealWithGif = new DealWithGif();
     dealWithGif.init();
 });
 
@@ -35,6 +36,7 @@ var DealWithGif = function() {
         $glassIndicator = $('.glass-indicator'),
         $indicatorDescription = $('.indicator-desc'),
         gifContext = gifCanvas.getContext('2d'),
+        gifQuality = 20,
         gifRatio = 2,
         glasses = new Image();
 
@@ -55,13 +57,19 @@ var DealWithGif = function() {
         D.log(dealSongEffectTime);
     };
 
+    this.setEncoderQulaity = function(quality) {
+        D.log(quality);
+        gifQuality = 30 - quality;
+    };
+
     var initRangeSlider = function() {
+        encoder = initGifEncoder();
         $('#dealtime').rangeslider({
             polyfill: false,
             onSlide: function (position, value) {
                 _DealWithGif.setDealTime(value);
                 localStorage.setItem('dealtime', value);
-                $('.dealtime__current').html(value);
+                $('.dealtime .range-current').html(value);
             }
         });
 
@@ -69,7 +77,22 @@ var DealWithGif = function() {
         D.log(value);
         if (value) {
             $('#dealtime').val(value).change();
-            $('.dealtime__current').val(value);
+            $('.dealtime range-current').val(value);
+        }
+
+        $('#gif-quality').rangeslider({
+            polyfill: false,
+            onSlide: function (position, value) {
+                _DealWithGif.setEncoderQulaity(value);
+                localStorage.setItem('gif-quality', value);
+                $('.gif-quality .range-current').html(value);
+            }
+        });
+        var value = localStorage.getItem('gif-quality');
+        D.log(value);
+        if (value) {
+            $('#gif-quality').val(value).change();
+            $('.gif-quality range-current').val(value);
         }
     };
 
@@ -79,13 +102,13 @@ var DealWithGif = function() {
         //  video.play();
         //  compatibility.requestAnimationFrame(play);
         // } else {
+            encoder.abort();
             setDealEffect(true);
             createjs.Sound.stop();
             isFaceFound = false;
             var offset = dealSongEffectInitTime - dealSongEffectTime;
             var sound = createjs.Sound.play("dealwitsong", {offset: offset, volume: 0.5}); // 0.5
             $indicatorDescription.show();
-            encoder = initGifEncoder();
             setTimeout(function() {
                 video.pause();
                 compatibility.requestAnimationFrame(applyDealWithItEffect);
@@ -237,6 +260,7 @@ var DealWithGif = function() {
                 $indicatorDescription.hide();
 
                 encoder.addFrame(gifContext, {delay: 1200, copy: true});
+                encoder.setOption('quality', gifQuality);
                 encoder.render();
                 encoder.on('finished', function(blob, data) {
                     gifBlob = blob;
@@ -340,13 +364,14 @@ var DealWithGif = function() {
         dealEffect.disabled = status;
         isDealEffect = status;
         isGifRecording = status;
+        gifPrevFrameTime = false;
     };
 
     var initGifEncoder = function() {
         var gif = new GIF({
             workers: 3,
             workerScript: 'vendor/js/gif.worker.js',
-            quality: 20,
+            quality: 30,
             width: gifCanvas.width,
             height: gifCanvas.height,
         });

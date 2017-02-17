@@ -35,12 +35,12 @@
 			</div>
 			<div class="bottom-group">
 				<div class="bottom-group__elements">
-					<div class="elements__dealtime">
-						<div class="dealtime__max">10</div>
-						<div class="dealtime__min">1</div>
-						<div class="dealtime__description">
+					<div class="bottom-group__range dealtime">
+						<div class="range-max">10</div>
+						<div class="range-min">1</div>
+						<div class="range-description">
 							Duration:
-							<span class="dealtime__current">10</span>
+							<span class="range-current">10</span>
 							sec
 						</div>
 						<input id="dealtime" type="range"
@@ -49,10 +49,24 @@
 							value="10"
 						>
 					</div>
+					<div class="bottom-group__range gif-quality">
+						<div class="range-max">30</div>
+						<div class="range-min">1</div>
+						<div class="range-description">
+							Quality:
+							<span class="range-current">20</span>
+						</div>
+						<input id="gif-quality" type="range"
+							min="1"
+							max="30"
+							value="20"
+						>
+					</div>
 				</div>
 				<div class="bottom-group__deal-button">
 					<button type="button" id="deal-effect" class="btn btn-primary btn-lg">Get The Deal</button>
 				</div>
+				<div class="clearfix"></div>
 			</div>
 		</div>
 		<div class="right-panel">
