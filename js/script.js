@@ -31,10 +31,11 @@ var DealWithGif = function() {
         dealSongEffectInitTime = 10000,
         dealSongEffectTime = 1000,
         // dealSongEffectTime = 2000,
-        gifCanvas = $('<canvas id="gif-canvas">')[0],
-        bufCanvas = $('<canvas>'),
         $glassIndicator = $('.glass-indicator'),
         $indicatorDescription = $('.indicator-desc'),
+        $recBlock = $('.rec-block-content'),
+        gifCanvas = $('<canvas id="gif-canvas">')[0],
+        bufCanvas = $('<canvas>'),
         gifContext = gifCanvas.getContext('2d'),
         gifQuality = 20,
         gifRatio = 2,
@@ -43,8 +44,9 @@ var DealWithGif = function() {
     canvas.width = 0;
     glasses.src = 'img/dealglasses.png';
 
-    $glassIndicator.hide();
-    $indicatorDescription.hide();
+    // $glassIndicator.hide();
+    // $indicatorDescription.hide();
+    // $recBlock.hide();
 
     this.init = function() {
         createjs.Sound.registerSound("assets/dealwitsong.ogg", "dealwitsong");
@@ -108,6 +110,7 @@ var DealWithGif = function() {
             isFaceFound = false;
             var offset = dealSongEffectInitTime - dealSongEffectTime;
             var sound = createjs.Sound.play("dealwitsong", {offset: offset, volume: 0.5}); // 0.5
+            $recBlock.show();
             $indicatorDescription.show();
             setTimeout(function() {
                 video.pause();
@@ -238,6 +241,7 @@ var DealWithGif = function() {
                 x: -100,
                 y: -100
             };
+        $recBlock.hide();
 
         createjs.Tween.get(params, {
             onChange: function() {

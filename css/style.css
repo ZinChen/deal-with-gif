@@ -145,6 +145,53 @@ span.header-logo {
     background-color: #e6e6e6;
 }
 
+.rec-block {
+    height: 125px;
+    position: relative;
+    margin-top: 10px;
+}
+
+.indicator-block {
+    height: 125px;
+}
+
+.rec-title {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.rec-icon {
+    height: 20px;
+}
+
+.rec-icon::before {
+    content: " ";
+    position: absolute;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: red;
+    transform: translateX(-50%);
+}
+
+.indicator-desc {
+    font-weight: bold;
+}
+
+.timer-block {
+    height: 125px;
+}
+
+.timer-title {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.timer-value {
+    font-size: 20px;
+}
+
 .bottom-group {
     margin: 16px;
 }
