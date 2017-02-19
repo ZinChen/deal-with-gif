@@ -34,6 +34,8 @@ var DealWithGif = function() {
         $glassIndicator = $('.glass-indicator'),
         $indicatorDescription = $('.indicator-desc'),
         $recBlock = $('.rec-block-content'),
+        $timerBlock = $('.timer-block-content'),
+        $timerValue = $('.timer-value'),
         gifCanvas = $('<canvas id="gif-canvas">')[0],
         bufCanvas = $('<canvas>'),
         gifContext = gifCanvas.getContext('2d'),
@@ -44,9 +46,10 @@ var DealWithGif = function() {
     canvas.width = 0;
     glasses.src = 'img/dealglasses.png';
 
-    // $glassIndicator.hide();
-    // $indicatorDescription.hide();
-    // $recBlock.hide();
+    $glassIndicator.hide();
+    $indicatorDescription.hide();
+    $recBlock.hide();
+    $timerBlock.hide();
 
     this.init = function() {
         createjs.Sound.registerSound("assets/dealwitsong.ogg", "dealwitsong");
@@ -63,6 +66,13 @@ var DealWithGif = function() {
         D.log(quality);
         gifQuality = 30 - quality;
     };
+
+    var initVideoStuff = function() {
+        initCanvas();
+        initRangeSlider();
+        $('.right-panel').show();
+        $('.bottom-group').show();
+    }
 
     var initRangeSlider = function() {
         encoder = initGifEncoder();
@@ -111,13 +121,29 @@ var DealWithGif = function() {
             var offset = dealSongEffectInitTime - dealSongEffectTime;
             var sound = createjs.Sound.play("dealwitsong", {offset: offset, volume: 0.5}); // 0.5
             $recBlock.show();
+            $timerBlock.show();
             $indicatorDescription.show();
+            countdown();
             setTimeout(function() {
                 video.pause();
                 compatibility.requestAnimationFrame(applyDealWithItEffect);
             }, dealSongEffectTime);
         // }
     };
+
+    var countdown = function() {
+        var seconds = dealSongEffectTime / 1000;
+        var countdownStep = function() {
+            $timerValue.html(seconds);
+            seconds -= 1;
+            if (seconds < 0) {
+                clearInterval(countInterval);
+            }
+        };
+        countdownStep();
+        var countInterval = setInterval(countdownStep, 1000);
+    }
+
 
     var startVideo = function() {
         // Getting video
@@ -152,8 +178,7 @@ var DealWithGif = function() {
         // if (btnDesert.disabled) btnDesert.disabled = false;
 
         if (!canvas.width) {
-            initCanvas();
-            initRangeSlider();
+            initVideoStuff();
         }
         var coords = {};
 
@@ -242,6 +267,7 @@ var DealWithGif = function() {
                 y: -100
             };
         $recBlock.hide();
+        $timerBlock.hide();
 
         createjs.Tween.get(params, {
             onChange: function() {
@@ -345,7 +371,7 @@ var DealWithGif = function() {
         link.click();
 
         $(['href="' + $img[0].src + '"']).remove();
-        $modal.modal('hide');
+        // $modal.modal('hide');
     });
 
     var showDealIt = function(src) {

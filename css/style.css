@@ -84,6 +84,7 @@ button.send-message {
     width: 120px;
     display: table-cell;
     vertical-align: top;
+    padding-top: 40px;
     // transform: translateY(30%);
 }
 
@@ -153,6 +154,10 @@ span.header-logo {
 
 .indicator-block {
     height: 125px;
+}
+
+.rec-block-content {
+    padding-top: 20px;
 }
 
 .rec-title {
