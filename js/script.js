@@ -209,7 +209,7 @@ var DealWithGif = function() {
                 if (gifPrevFrameTime) {
                     gifDelay = currentTime - gifPrevFrameTime;
                 }
-                D.log(gifDelay);
+                // D.log(gifDelay);
                 gifPrevFrameTime = currentTime;
                 drawGifCanvas();
                 encoder.addFrame(gifContext, {delay: gifDelay, copy: true});
